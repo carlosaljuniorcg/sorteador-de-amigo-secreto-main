@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import { RecoilRoot } from "recoil";
 import { useListaDeParticipantes } from "../state/hook/useListaDeParticipantes";
@@ -38,7 +38,7 @@ describe('na pagina de sorteio', () => {
         </RecoilRoot>)
 
         const opcoes = screen.queryAllByRole('option')
-        expect(opcoes).toHaveLength(participantes.length + 1)
+        expect(opcoes).toHaveLength(participantes.length + 1) // pq já vem uma option por padrão
     })
     test('o amigo secreto é exibido quando solicitado', () => {
         render(<RecoilRoot>
@@ -61,5 +61,25 @@ describe('na pagina de sorteio', () => {
 
         expect(amigoSecreto).toBeInTheDocument()
 
+    })
+    test('esconde o amigo secreto sorteado depois de 5 segundos', async () => {
+        jest.useFakeTimers();
+
+        render(
+            <RecoilRoot>
+                <Sorteio />
+            </RecoilRoot>
+        )
+
+        const select = screen.getByPlaceholderText('Selecione o participante')
+        fireEvent.change(select, { target: { value: participantes[1] } })
+
+        const button = screen.getByRole('button')
+        fireEvent.click(button)
+        act(() => {
+            jest.runAllTimers();
+        })
+        const alerta = screen.queryByRole('alert')
+        expect(alerta).not.toBeInTheDocument()
     })
 })

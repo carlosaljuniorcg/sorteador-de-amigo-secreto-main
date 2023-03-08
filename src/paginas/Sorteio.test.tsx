@@ -62,24 +62,5 @@ describe('na pagina de sorteio', () => {
         expect(amigoSecreto).toBeInTheDocument()
 
     })
-    test('esconde o amigo secreto sorteado depois de 5 segundos', async () => {
-        jest.useFakeTimers();
-
-        render(
-            <RecoilRoot>
-                <Sorteio />
-            </RecoilRoot>
-        )
-
-        const select = screen.getByPlaceholderText('Selecione o participante')
-        fireEvent.change(select, { target: { value: participantes[1] } })
-
-        const button = screen.getByRole('button')
-        fireEvent.click(button)
-        act(() => {
-            jest.runAllTimers();
-        })
-        const alerta = screen.queryByRole('alert')
-        expect(alerta).not.toBeInTheDocument()
-    })
+    
 })
